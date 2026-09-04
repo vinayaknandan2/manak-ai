@@ -1,6 +1,6 @@
 import React from 'react';
 import AuthLayout from '../components/layout/AuthLayout';
-import LoginForm from '../features/auth/LoginForm';
+import LoginForm from '../components/auth/LoginForm';
 
 export default function LoginPage() {
   return (

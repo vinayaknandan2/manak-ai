@@ -1,6 +1,6 @@
 import React from 'react';
 import { ArrowRight, CheckCircle2, Shield } from 'lucide-react';
-import Badge from '../../components/common/Badge';
+import Badge from '../common/Badge';
 
 export default function CorrelatedTable({ standards = [] }) {
   return (
@@ -51,23 +51,22 @@ export default function CorrelatedTable({ standards = [] }) {
                     </div>
                   </div>
                 </td>
-                <td className="py-3.5 px-4">
-                  <span className="px-2 py-0.5 rounded bg-slate-100 text-slate-600 font-medium">
-                    {item.category}
-                  </span>
+                <td className="py-3.5 px-4 text-slate-500">
+                  {item.category}
                 </td>
                 <td className="py-3.5 px-4">
-                  <Badge variant="blue" size="sm">
-                    {item.compliance}
-                  </Badge>
+                  <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                    <CheckCircle2 className="h-3 w-3" />
+                    {item.complianceScheme}
+                  </span>
                 </td>
                 <td className="py-3.5 px-4 text-right">
                   <button
-                    onClick={() => alert(`Standard details for ${item.code}`)}
-                    className="inline-flex items-center gap-1 text-xs font-semibold text-brand-blue hover:text-blue-700"
+                    onClick={() => alert(`Viewing cross-reference specification for ${item.code}`)}
+                    className="text-brand-blue hover:text-brand-blue-hover font-semibold inline-flex items-center gap-1 transition-colors cursor-pointer"
                   >
-                    <span>View Clause</span>
-                    <ArrowRight className="h-3 w-3" />
+                    <span>View Spec</span>
+                    <ArrowRight className="h-3.5 w-3.5" />
                   </button>
                 </td>
               </tr>

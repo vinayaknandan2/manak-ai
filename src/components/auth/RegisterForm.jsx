@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
-import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'sonner';
-import { useAuth } from '../../app/hooks';
+import { registerAgency, clearAuthError } from '../../features/auth/authSlice';
 
 export default function RegisterForm() {
   const navigate = useNavigate();
-  const location = useLocation();
-  const { register, loading, error, clearError } = useAuth();
+  const dispatch = useDispatch();
+  const { loading, error } = useSelector((state) => state.auth);
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -18,7 +20,7 @@ export default function RegisterForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLocalError('');
-    if (clearError) clearError();
+    dispatch(clearAuthError());
 
     const trimmedName = formData.name.trim();
     if (trimmedName.length < 2) {
@@ -44,11 +46,14 @@ export default function RegisterForm() {
 
     try {
       const normalizedEmail = formData.email.trim().toLowerCase();
-      await register({
-        name: trimmedName,
-        email: normalizedEmail,
-        password: formData.password,
-      });
+      await dispatch(
+        registerAgency({
+          name: trimmedName,
+          email: normalizedEmail,
+          password: formData.password,
+        })
+      ).unwrap();
+
       toast.success('Account created successfully! Please sign in with your credentials.');
       navigate('/login', {
         state: {

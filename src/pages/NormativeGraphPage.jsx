@@ -3,11 +3,13 @@ import { useSearchParams } from 'react-router-dom';
 import { Network, Search, AlertCircle, Layers } from 'lucide-react';
 import DashboardLayout from '../components/layout/DashboardLayout';
 import Button from '../components/common/Button';
-import { useStandards } from '../app/hooks';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchStandardGraph } from '../features/standards/standardSlice';
 
 export default function NormativeGraphPage() {
   const [searchParams] = useSearchParams();
-  const { standardGraph, loading, error, loadGraph } = useStandards();
+  const dispatch = useDispatch();
+  const { standardGraph, loading, error } = useSelector((state) => state.standards);
   const [standardId, setStandardId] = useState(searchParams.get('id') || '');
   const [depth, setDepth] = useState(1);
 
@@ -15,14 +17,14 @@ export default function NormativeGraphPage() {
     const paramId = searchParams.get('id');
     if (paramId) {
       setStandardId(paramId);
-      loadGraph(paramId, depth).catch(() => {});
+      dispatch(fetchStandardGraph({ id: paramId, depth }));
     }
-  }, [searchParams]);
+  }, [searchParams, depth, dispatch]);
 
   const handleFetch = (e) => {
     e.preventDefault();
     if (!standardId.trim()) return;
-    loadGraph(standardId.trim(), depth).catch(() => {});
+    dispatch(fetchStandardGraph({ id: standardId.trim(), depth }));
   };
 
   const graphData = standardGraph?.graph;

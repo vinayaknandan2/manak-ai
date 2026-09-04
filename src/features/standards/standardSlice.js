@@ -1,15 +1,12 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { standardApi } from '../../api/standardApi';
+import { apiClient } from '../../api';
 
 // GET /api/standard/search?q=...
-// Controller: searchStandard in standardController.js
-// Response: { success: true, query, count, standards: [...] }
 export const searchStandards = createAsyncThunk(
   'standards/searchStandards',
   async (query, { rejectWithValue }) => {
     try {
-      const res = await standardApi.searchStandards(query);
-      return res;
+      return await apiClient.get(`/standard/search?q=${encodeURIComponent(query)}`);
     } catch (err) {
       return rejectWithValue(err.message || 'Failed to search standards');
     }
@@ -17,13 +14,11 @@ export const searchStandards = createAsyncThunk(
 );
 
 // GET /api/standard/:id/version
-// Controller: getStandardVersionController in standardController.js
 export const fetchStandardVersion = createAsyncThunk(
   'standards/fetchStandardVersion',
   async (id, { rejectWithValue }) => {
     try {
-      const res = await standardApi.getStandardVersion(id);
-      return res;
+      return await apiClient.get(`/standard/${id}/version`);
     } catch (err) {
       return rejectWithValue(err.message || 'Failed to fetch standard version');
     }
@@ -31,14 +26,11 @@ export const fetchStandardVersion = createAsyncThunk(
 );
 
 // GET /api/standard/:id/graph?depth=1
-// Controller: getStandardGraphController in standardController.js
-// Response: { success: true, standard, depth, graph: { nodes, edges } }
 export const fetchStandardGraph = createAsyncThunk(
   'standards/fetchStandardGraph',
   async ({ id, depth = 1 }, { rejectWithValue }) => {
     try {
-      const res = await standardApi.getStandardGraph(id, depth);
-      return res;
+      return await apiClient.get(`/standard/${id}/graph?depth=${depth}`);
     } catch (err) {
       return rejectWithValue(err.message || 'Failed to fetch standard graph');
     }
@@ -46,12 +38,11 @@ export const fetchStandardGraph = createAsyncThunk(
 );
 
 // POST /api/standard
-// Controller: createStandard in standardController.js
 export const createNewStandard = createAsyncThunk(
   'standards/createNewStandard',
   async (data, { rejectWithValue }) => {
     try {
-      const res = await standardApi.createStandard(data);
+      const res = await apiClient.post('/standard', data);
       return res.standard;
     } catch (err) {
       return rejectWithValue(err.message || 'Failed to create standard');

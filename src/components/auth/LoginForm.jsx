@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'sonner';
-import { useAuth } from '../../app/hooks';
+import { loginOfficer, clearAuthError } from '../../features/auth/authSlice';
 
 export default function LoginForm() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { login, loading, error, clearError } = useAuth();
+  const dispatch = useDispatch();
+  const { loading, error } = useSelector((state) => state.auth);
+
   const [email, setEmail] = useState(() => location.state?.email || '');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(true);
@@ -23,10 +26,10 @@ export default function LoginForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLocalError('');
-    if (clearError) clearError();
+    dispatch(clearAuthError());
 
     try {
-      const res = await login({ email, password });
+      const res = await dispatch(loginOfficer({ email, password })).unwrap();
       toast.success(`Welcome back, ${res?.user?.name || 'Officer'}!`);
       const destination = location.state?.from?.pathname || '/dashboard';
       navigate(destination, { replace: true });

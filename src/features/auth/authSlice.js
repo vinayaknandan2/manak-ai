@@ -1,13 +1,48 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { authApi } from '../../api/authApi';
-import { getTokenCookie, getUserCookie, removeTokenCookie } from '../../utils/cookieUtils';
+import { apiClient } from '../../api';
+import {
+  getTokenCookie,
+  setTokenCookie,
+  removeTokenCookie,
+  getUserCookie,
+  setUserCookie,
+  removeUserCookie,
+} from '../../utils/cookieUtils';
+
+// Helper to normalize user object
+const normalizeUser = (user) => {
+  if (!user) return null;
+  const id = user.id || user._id;
+  return {
+    ...user,
+    id,
+    _id: id,
+    role: user.role || 'USER',
+  };
+};
 
 export const loginOfficer = createAsyncThunk(
   'auth/loginOfficer',
   async (credentials, { rejectWithValue }) => {
     try {
-      const response = await authApi.login(credentials);
-      return response;
+      const normalizedEmail = credentials.email.trim().toLowerCase();
+      const data = await apiClient.post('/auth/login', {
+        email: normalizedEmail,
+        password: credentials.password,
+      });
+
+      const user = normalizeUser(data?.user);
+      if (data?.token) {
+        setTokenCookie(data.token);
+      }
+      if (user) {
+        setUserCookie(user);
+      }
+
+      return {
+        ...data,
+        user,
+      };
     } catch (error) {
       return rejectWithValue(error.message || 'Login failed');
     }
@@ -18,8 +53,23 @@ export const registerAgency = createAsyncThunk(
   'auth/registerAgency',
   async (formData, { rejectWithValue }) => {
     try {
-      const response = await authApi.register(formData);
-      return response;
+      const payload = {
+        name: formData.name?.trim() || formData.email.split('@')[0],
+        email: formData.email.trim().toLowerCase(),
+        password: formData.password,
+      };
+
+      if (formData.role === 'ADMIN' || formData.role === 'USER') {
+        payload.role = formData.role;
+      }
+
+      const data = await apiClient.post('/auth/register', payload);
+      const user = normalizeUser(data?.user);
+
+      return {
+        ...data,
+        user,
+      };
     } catch (error) {
       return rejectWithValue(error.message || 'Registration failed');
     }
@@ -30,8 +80,16 @@ export const fetchProfile = createAsyncThunk(
   'auth/fetchProfile',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await authApi.getMe();
-      return response;
+      const data = await apiClient.get('/auth/me');
+      if (data?.user) {
+        const user = normalizeUser(data.user);
+        setUserCookie(user);
+        return {
+          ...data,
+          user,
+        };
+      }
+      return data;
     } catch (error) {
       return rejectWithValue(error.message || 'Session verification failed');
     }
@@ -59,8 +117,8 @@ const authSlice = createSlice({
       state.isAuthenticated = !!action.payload.token;
     },
     logoutUser: (state) => {
-      authApi.logout();
       removeTokenCookie();
+      removeUserCookie();
       state.user = null;
       state.token = null;
       state.isAuthenticated = false;
@@ -108,7 +166,6 @@ const authSlice = createSlice({
         }
       })
       .addCase(fetchProfile.rejected, (state) => {
-        // If token failed verification in backend auth middleware
         removeTokenCookie();
         removeUserCookie();
         state.user = null;

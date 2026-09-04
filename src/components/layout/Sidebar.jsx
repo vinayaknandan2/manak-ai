@@ -13,7 +13,8 @@ import {
   PanelLeftOpen,
   X,
 } from 'lucide-react';
-import { useAuth } from '../../app/AuthContext';
+import { useDispatch, useSelector } from 'react-redux';
+import { logoutUser } from '../../features/auth/authSlice';
 
 export default function Sidebar({
   isOpen,
@@ -21,7 +22,9 @@ export default function Sidebar({
   isCollapsed = false,
   onToggleCollapse,
 }) {
-  const { user, logout } = useAuth();
+  const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.auth);
+  const handleLogout = () => dispatch(logoutUser());
 
   const PRIMARY_NAV = [
     {
@@ -228,9 +231,9 @@ export default function Sidebar({
 
               <button
                 type="button"
-                onClick={logout}
+                onClick={handleLogout}
                 title="Sign Out"
-                className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-md transition-colors shrink-0"
+                className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-md transition-colors shrink-0 cursor-pointer"
               >
                 <LogOut className="h-3.5 w-3.5" />
               </button>
@@ -238,9 +241,9 @@ export default function Sidebar({
           ) : (
             <button
               type="button"
-              onClick={logout}
+              onClick={handleLogout}
               title="Sign Out"
-              className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors"
+              className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
             >
               <LogOut className="h-4 w-4" />
             </button>

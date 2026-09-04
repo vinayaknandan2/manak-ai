@@ -1,8 +1,8 @@
 import React from 'react';
 import { ShieldCheck, Scale, FileText, Download } from 'lucide-react';
 import DashboardLayout from '../components/layout/DashboardLayout';
-import GazetteGrid from '../features/qco/GazetteGrid';
-import QuickValidator from '../features/qco/QuickValidator';
+import GazetteGrid from '../components/qco/GazetteGrid';
+import QuickValidator from '../components/qco/QuickValidator';
 import Button from '../components/common/Button';
 
 export default function QCOTrackerPage() {

@@ -9,10 +9,9 @@ import {
   CheckSquare,
   Square,
   AlertCircle,
-  Sparkles,
 } from 'lucide-react';
-import Badge from '../../components/common/Badge';
-import Button from '../../components/common/Button';
+import Badge from '../common/Badge';
+import Button from '../common/Button';
 
 export default function TenderTable({ tenders = [], onSelectTender }) {
   const navigate = useNavigate();
@@ -58,7 +57,7 @@ export default function TenderTable({ tenders = [], onSelectTender }) {
           {/* Category filter pills */}
           <button
             onClick={() => setFilterCategory('all')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
               filterCategory === 'all'
                 ? 'bg-brand-blue text-white shadow-sm'
                 : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
@@ -69,7 +68,7 @@ export default function TenderTable({ tenders = [], onSelectTender }) {
 
           <button
             onClick={() => setFilterCategory('high-risk')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1.5 ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1.5 cursor-pointer ${
               filterCategory === 'high-risk'
                 ? 'bg-rose-600 text-white shadow-sm'
                 : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
@@ -106,7 +105,7 @@ export default function TenderTable({ tenders = [], onSelectTender }) {
                 <button
                   type="button"
                   onClick={toggleSelectAll}
-                  className="text-slate-400 hover:text-slate-700"
+                  className="text-slate-400 hover:text-slate-700 cursor-pointer"
                 >
                   {selectedRows.length > 0 && selectedRows.length === filtered.length ? (
                     <CheckSquare className="h-4 w-4 text-brand-blue" />
@@ -139,7 +138,7 @@ export default function TenderTable({ tenders = [], onSelectTender }) {
                     <button
                       type="button"
                       onClick={() => toggleRow(tender.id)}
-                      className="text-slate-400 hover:text-slate-700"
+                      className="text-slate-400 hover:text-slate-700 cursor-pointer"
                     >
                       {isSelected ? (
                         <CheckSquare className="h-4 w-4 text-brand-blue" />
@@ -229,21 +228,21 @@ export default function TenderTable({ tenders = [], onSelectTender }) {
                           if (onSelectTender) onSelectTender(tender);
                           navigate('/tender-auditor');
                         }}
-                        className="p-1.5 text-slate-400 hover:text-brand-blue hover:bg-blue-50 rounded-md transition-colors"
+                        className="p-1.5 text-slate-400 hover:text-brand-blue hover:bg-blue-50 rounded-md transition-colors cursor-pointer"
                       >
                         <Eye className="h-4 w-4" />
                       </button>
                       <button
                         title="Edit / Re-synthesize"
                         onClick={() => navigate('/clause-studio')}
-                        className="p-1.5 text-slate-400 hover:text-amber-600 hover:bg-amber-50 rounded-md transition-colors"
+                        className="p-1.5 text-slate-400 hover:text-amber-600 hover:bg-amber-50 rounded-md transition-colors cursor-pointer"
                       >
                         <FileEdit className="h-4 w-4" />
                       </button>
                       <button
                         title="Export GeM Document"
                         onClick={() => alert(`Exporting GeM draft package for ${tender.id}`)}
-                        className="p-1.5 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-md transition-colors"
+                        className="p-1.5 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-md transition-colors cursor-pointer"
                       >
                         <Download className="h-4 w-4" />
                       </button>

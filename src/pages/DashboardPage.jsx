@@ -17,20 +17,23 @@ import DashboardLayout from '../components/layout/DashboardLayout';
 import MetricCard from '../components/common/MetricCard';
 import Button from '../components/common/Button';
 import Modal from '../components/common/Modal';
-import { useProcurement, useAuth } from '../app/hooks';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  fetchDashboardSummary,
+  createProcurement,
+} from '../features/procurement/procurementSlice';
 
 export default function DashboardPage() {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.auth);
   const {
     dashboardSummary,
     recentProcurements,
     recentRecommendations,
-    loadDashboardSummary,
-    createProcurement,
     loading,
     error,
-  } = useProcurement();
+  } = useSelector((state) => state.procurement);
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [newProcurement, setNewProcurement] = useState({
@@ -41,8 +44,8 @@ export default function DashboardPage() {
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    loadDashboardSummary().catch(() => {});
-  }, []);
+    dispatch(fetchDashboardSummary());
+  }, [dispatch]);
 
   const handleCreate = async (e) => {
     e.preventDefault();
@@ -50,10 +53,10 @@ export default function DashboardPage() {
 
     setSubmitting(true);
     try {
-      await createProcurement(newProcurement);
+      await dispatch(createProcurement(newProcurement)).unwrap();
       setIsCreateModalOpen(false);
       setNewProcurement({ name: '', description: '', type: 'Goods' });
-      await loadDashboardSummary();
+      await dispatch(fetchDashboardSummary()).unwrap();
     } catch (err) {
       alert(err.message || 'Failed to create procurement');
     } finally {

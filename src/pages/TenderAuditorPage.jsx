@@ -20,14 +20,24 @@ import {
 import DashboardLayout from '../components/layout/DashboardLayout';
 import Button from '../components/common/Button';
 import Badge from '../components/common/Badge';
-import { useProcurement, useStandards } from '../app/hooks';
-import RequirementsInspectionView from '../features/procurement/RequirementsInspectionView';
-import CitationsEvidenceView from '../features/procurement/CitationsEvidenceView';
-import GapAnalysisSplitView from '../features/procurement/GapAnalysisSplitView';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  fetchProcurements,
+  fetchProcurementById,
+  analyzeProcurement,
+  fetchRecommendations,
+  fetchProcurementEvidence,
+  recommendStandard,
+} from '../features/procurement/procurementSlice';
+import { searchStandards } from '../features/standards/standardSlice';
+import RequirementsInspectionView from '../components/procurement/RequirementsInspectionView';
+import CitationsEvidenceView from '../components/procurement/CitationsEvidenceView';
+import GapAnalysisSplitView from '../components/procurement/GapAnalysisSplitView';
 
 export default function TenderAuditorPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const {
     procurements,
@@ -37,15 +47,9 @@ export default function TenderAuditorPage() {
     evidence,
     isAuditing,
     error,
-    loadProcurements,
-    loadProcurementById,
-    analyzeProcurement,
-    loadRecommendations,
-    loadEvidence,
-    recommendStandard,
-  } = useProcurement();
+  } = useSelector((state) => state.procurement);
 
-  const { standards: liveStandards, search: searchLiveStandards } = useStandards();
+  const { standards: liveStandards } = useSelector((state) => state.standards);
 
   const [selectedId, setSelectedId] = useState(searchParams.get('id') || '');
   const [activeTab, setActiveTab] = useState('requirements'); // 'requirements', 'gap-audit', 'citations-evidence'
@@ -53,38 +57,38 @@ export default function TenderAuditorPage() {
   const [matchingQuery, setMatchingQuery] = useState(false);
 
   useEffect(() => {
-    loadProcurements().catch(() => {});
+    dispatch(fetchProcurements());
     const paramId = searchParams.get('id');
     if (paramId) {
       setSelectedId(paramId);
-      loadProcurementById(paramId).catch(() => {});
-      loadRecommendations(paramId).catch(() => {});
-      loadEvidence(paramId).catch(() => {});
+      dispatch(fetchProcurementById(paramId));
+      dispatch(fetchRecommendations(paramId));
+      dispatch(fetchProcurementEvidence(paramId));
     }
-  }, [searchParams]);
+  }, [searchParams, dispatch]);
 
   const handleSelect = (id) => {
     setSelectedId(id);
     if (id) {
       setSearchParams({ id });
-      loadProcurementById(id).catch(() => {});
-      loadRecommendations(id).catch(() => {});
-      loadEvidence(id).catch(() => {});
+      dispatch(fetchProcurementById(id));
+      dispatch(fetchRecommendations(id));
+      dispatch(fetchProcurementEvidence(id));
     }
   };
 
   const handleRunAnalysis = async () => {
     if (!selectedId) return;
     try {
-      const reqRes = await analyzeProcurement(selectedId);
-      await loadRecommendations(selectedId);
-      await loadEvidence(selectedId);
+      const reqRes = await dispatch(analyzeProcurement(selectedId)).unwrap();
+      await dispatch(fetchRecommendations(selectedId)).unwrap();
+      await dispatch(fetchProcurementEvidence(selectedId)).unwrap();
 
       // If recommendations from backend are empty, perform a live search against BIS standards
       if (reqRes && (!recommendations || recommendations.length === 0)) {
         const queryTerm = reqRes.product || (reqRes.keywords && reqRes.keywords[0]) || '';
         if (queryTerm) {
-          searchLiveStandards(queryTerm).catch(() => {});
+          dispatch(searchStandards(queryTerm));
         }
       }
     } catch (err) {
@@ -97,9 +101,9 @@ export default function TenderAuditorPage() {
     if (!selectedId || !recommendQuery.trim()) return;
     setMatchingQuery(true);
     try {
-      await recommendStandard(selectedId, recommendQuery.trim());
-      await searchLiveStandards(recommendQuery.trim());
-      await loadEvidence(selectedId);
+      await dispatch(recommendStandard({ id: selectedId, query: recommendQuery.trim() })).unwrap();
+      await dispatch(searchStandards(recommendQuery.trim())).unwrap();
+      await dispatch(fetchProcurementEvidence(selectedId)).unwrap();
     } catch (err) {
       alert(err.message || 'Recommendation failed');
     } finally {
@@ -109,7 +113,7 @@ export default function TenderAuditorPage() {
 
   const handleKeywordSearch = async (kw) => {
     setRecommendQuery(kw);
-    searchLiveStandards(kw).catch(() => {});
+    dispatch(searchStandards(kw));
     setActiveTab('citations-evidence');
   };
 

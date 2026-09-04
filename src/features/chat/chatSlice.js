@@ -1,15 +1,12 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { chatApi } from '../../api/chatApi';
+import { apiClient } from '../../api';
 
 // POST /api/chat
-// Controller: chat in chatController.js
-// Body: { message }
-// Returns: { success: true, answer }
 export const sendChatMessage = createAsyncThunk(
   'chat/sendChatMessage',
   async (message, { rejectWithValue }) => {
     try {
-      const res = await chatApi.sendMessage(message);
+      const res = await apiClient.post('/chat', { message });
       return res.answer;
     } catch (err) {
       return rejectWithValue(err.message || 'Chat request failed');
@@ -17,15 +14,12 @@ export const sendChatMessage = createAsyncThunk(
   }
 );
 
-// POST /api/ai/ask
-// Controller: getAIResponse in ai.controller.js
-// Body: { prompt }
-// Returns: { success: true, answer }
+// POST /api/ai/ask or POST /api/chat
 export const askAI = createAsyncThunk(
   'chat/askAI',
   async (prompt, { rejectWithValue }) => {
     try {
-      const res = await chatApi.askAi(prompt);
+      const res = await apiClient.post('/chat', { message: prompt });
       return res.answer;
     } catch (err) {
       return rejectWithValue(err.message || 'AI request failed');

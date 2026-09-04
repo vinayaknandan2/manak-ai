@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   MessageSquare,
   X,
@@ -8,7 +9,13 @@ import {
   User,
   RotateCcw,
 } from 'lucide-react';
-import { useChat } from '../../app/hooks';
+import {
+  openChat,
+  closeChat,
+  clearMessages,
+  addUserMessage,
+  sendChatMessage,
+} from '../../features/chat/chatSlice';
 
 const DEFAULT_SUGGESTIONS = [
   'What are the mandatory clauses for 50W LED streetlighting?',
@@ -17,7 +24,8 @@ const DEFAULT_SUGGESTIONS = [
 ];
 
 export default function GovAIChatDrawer() {
-  const { messages, isOpen, loading, open, close, clear, sendMessage } = useChat();
+  const dispatch = useDispatch();
+  const { messages, isOpen, loading } = useSelector((state) => state.chat);
   const [input, setInput] = useState('');
   const messagesEndRef = useRef(null);
 
@@ -34,11 +42,8 @@ export default function GovAIChatDrawer() {
     if (!query.trim() || loading) return;
 
     setInput('');
-    try {
-      await sendMessage(query, messages);
-    } catch {
-      // Handled in Redux slice
-    }
+    dispatch(addUserMessage(query));
+    dispatch(sendChatMessage(query));
   };
 
   return (
@@ -47,7 +52,7 @@ export default function GovAIChatDrawer() {
       {!isOpen && (
         <button
           type="button"
-          onClick={open}
+          onClick={() => dispatch(openChat())}
           className="fixed bottom-6 right-6 z-40 flex items-center gap-2.5 px-4 py-3 bg-brand-blue text-white rounded-full shadow-2xl hover:bg-brand-blue-hover transition-all duration-200 hover:scale-105 group border border-white/20"
         >
           <div className="relative">
@@ -78,15 +83,15 @@ export default function GovAIChatDrawer() {
 
             <div className="flex items-center gap-1">
               <button
-                onClick={clear}
+                onClick={() => dispatch(clearMessages())}
                 title="Clear Chat"
-                className="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-white/5 transition-colors"
+                className="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-white/5 transition-colors cursor-pointer"
               >
                 <RotateCcw className="h-4 w-4" />
               </button>
               <button
-                onClick={close}
-                className="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-white/5 transition-colors"
+                onClick={() => dispatch(closeChat())}
+                className="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-white/5 transition-colors cursor-pointer"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -169,7 +174,7 @@ export default function GovAIChatDrawer() {
               <button
                 key={idx}
                 onClick={() => handleSend(s)}
-                className="shrink-0 px-2.5 py-1 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition-colors"
+                className="shrink-0 px-2.5 py-1 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition-colors cursor-pointer"
               >
                 {s}
               </button>
@@ -194,7 +199,7 @@ export default function GovAIChatDrawer() {
             <button
               type="submit"
               disabled={!input.trim() || loading}
-              className="p-2 bg-brand-blue text-white rounded-lg hover:bg-brand-blue-hover disabled:opacity-40 transition-colors shrink-0"
+              className="p-2 bg-brand-blue text-white rounded-lg hover:bg-brand-blue-hover disabled:opacity-40 transition-colors shrink-0 cursor-pointer"
             >
               <Send className="h-4 w-4" />
             </button>

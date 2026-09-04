@@ -1,14 +1,12 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import {
   ZoomIn,
   ZoomOut,
-  Maximize2,
   RotateCcw,
-  ShieldAlert,
   Layers,
   Info,
 } from 'lucide-react';
-import Badge from '../../components/common/Badge';
+import Badge from '../common/Badge';
 
 export default function NormativeGraphCanvas({
   graphData,
@@ -29,11 +27,6 @@ export default function NormativeGraphCanvas({
   const rootNode = graphData?.rootNode;
   const nodes = graphData?.nodes || [];
 
-  // Fixed coordinate mapping for hierarchical clarity
-  // Root: Center (x: 460, y: 220)
-  // Level 1: Left & Right branches (x: 230, y: 120) and (x: 690, y: 120)
-  // Level 2: Left subordinates (x: 120, y: 340), (x: 340, y: 340)
-  // Level 3: Right subordinates (x: 580, y: 340), (x: 800, y: 340)
   const NODE_POSITIONS = {
     'IS-10322-P5': { x: 460, y: 200, width: 220, height: 90 },
     'IS-302-1': { x: 200, y: 90, width: 190, height: 80 },
@@ -82,21 +75,21 @@ export default function NormativeGraphCanvas({
       <div className="hud-element absolute top-4 left-4 z-20 flex flex-wrap items-center gap-2 bg-[#161B26]/90 backdrop-blur-md p-1.5 rounded-xl border border-white/10 shadow-xl">
         <button
           onClick={() => handleZoom(0.15)}
-          className="p-2 text-slate-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
+          className="p-2 text-slate-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors cursor-pointer"
           title="Zoom In"
         >
           <ZoomIn className="h-4 w-4" />
         </button>
         <button
           onClick={() => handleZoom(-0.15)}
-          className="p-2 text-slate-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
+          className="p-2 text-slate-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors cursor-pointer"
           title="Zoom Out"
         >
           <ZoomOut className="h-4 w-4" />
         </button>
         <button
           onClick={resetView}
-          className="p-2 text-slate-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
+          className="p-2 text-slate-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors cursor-pointer"
           title="Fit to Screen"
         >
           <RotateCcw className="h-4 w-4" />
@@ -213,7 +206,7 @@ export default function NormativeGraphCanvas({
             );
           })}
 
-          {/* Center Root Node: IS 10322 (Part 5/Sec 3) */}
+          {/* Center Root Node */}
           {rootNode && (
             <g
               className="node-element cursor-pointer group"

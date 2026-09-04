@@ -1,7 +1,7 @@
 import React from 'react';
-import { X, ShieldCheck, Beaker, Building2, BookOpen, ExternalLink, ArrowRight } from 'lucide-react';
-import Badge from '../../components/common/Badge';
-import Button from '../../components/common/Button';
+import { X, ShieldCheck, Beaker, Building2, BookOpen, ArrowRight } from 'lucide-react';
+import Badge from '../common/Badge';
+import Button from '../common/Button';
 
 export default function NodeInspectorDrawer({ node, onClose, onInjectClause }) {
   if (!node) return null;
@@ -25,7 +25,7 @@ export default function NodeInspectorDrawer({ node, onClose, onInjectClause }) {
 
         <button
           onClick={onClose}
-          className="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 rounded-lg transition-colors"
+          className="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 rounded-lg transition-colors cursor-pointer"
         >
           <X className="h-5 w-5" />
         </button>

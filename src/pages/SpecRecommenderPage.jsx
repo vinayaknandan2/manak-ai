@@ -11,18 +11,20 @@ import {
 } from 'lucide-react';
 import DashboardLayout from '../components/layout/DashboardLayout';
 import Button from '../components/common/Button';
-import { useStandards } from '../app/hooks';
+import { useDispatch, useSelector } from 'react-redux';
+import { searchStandards } from '../features/standards/standardSlice';
 
 export default function SpecRecommenderPage() {
   const navigate = useNavigate();
-  const { standards, searchCount, loading, error, search } = useStandards();
+  const dispatch = useDispatch();
+  const { standards, searchCount, loading, error } = useSelector((state) => state.standards);
   const [searchInput, setSearchInput] = useState('');
 
   const handleSearch = async (e) => {
     e.preventDefault();
     if (!searchInput.trim()) return;
     try {
-      await search(searchInput.trim());
+      await dispatch(searchStandards(searchInput.trim())).unwrap();
     } catch {
       // Handled in Redux slice
     }

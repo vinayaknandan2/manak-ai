@@ -10,10 +10,12 @@ import {
 } from 'lucide-react';
 import DashboardLayout from '../components/layout/DashboardLayout';
 import Button from '../components/common/Button';
-import { useChat } from '../app/hooks';
+import { useDispatch, useSelector } from 'react-redux';
+import { askAI, addUserMessage } from '../features/chat/chatSlice';
 
 export default function ClauseStudioPage() {
-  const { askAI, loading, error } = useChat();
+  const dispatch = useDispatch();
+  const { loading, error } = useSelector((state) => state.chat);
   const [prompt, setPrompt] = useState(
     'Synthesize an airtight dispute-proof technical tender specification clause for outdoor streetlighting conforming to BIS standards, mandatory ISI mark, 10kV surge suppressor, and DPIIT Quality Control Orders.'
   );
@@ -25,7 +27,8 @@ export default function ClauseStudioPage() {
     if (!prompt.trim()) return;
 
     try {
-      const response = await askAI(prompt);
+      dispatch(addUserMessage(prompt));
+      const response = await dispatch(askAI(prompt)).unwrap();
       setSynthesizedClause(response);
     } catch {
       // Error handled in Redux slice

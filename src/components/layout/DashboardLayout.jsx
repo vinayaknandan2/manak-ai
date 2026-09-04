@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Menu, Bell, Shield, ExternalLink, HelpCircle } from 'lucide-react';
+import { useSelector } from 'react-redux';
 import Sidebar from './Sidebar';
 import Footer from './Footer';
-import GovAIChatDrawer from '../../features/chat/GovAIChatDrawer';
-import { useAuth } from '../../app/AuthContext';
+import GovAIChatDrawer from '../chat/GovAIChatDrawer';
 
 export default function DashboardLayout({
   children,
@@ -30,7 +30,7 @@ export default function DashboardLayout({
     });
   };
 
-  const { user } = useAuth();
+  const { user } = useSelector((state) => state.auth);
 
   return (
     <div className="min-h-screen bg-brand-light flex antialiased">

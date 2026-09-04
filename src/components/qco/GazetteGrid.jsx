@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ShieldCheck, FileText, ExternalLink, Calendar, Building, AlertCircle } from 'lucide-react';
-import { standardApi } from '../../api/standardApi';
+import { apiClient } from '../../api';
 
 export default function GazetteGrid() {
   const [qcos, setQcos] = useState([]);
@@ -12,7 +12,7 @@ export default function GazetteGrid() {
       setLoading(true);
       setError(null);
       try {
-        const res = await standardApi.searchStandards('QCO mandatory');
+        const res = await apiClient.get(`/standard/search?q=${encodeURIComponent('QCO mandatory')}`);
         setQcos(res.standards || []);
       } catch (err) {
         setError(err.message || 'Failed to fetch statutory QCO records');
@@ -43,41 +43,39 @@ export default function GazetteGrid() {
         <div className="bg-white border border-brand-border rounded-xl p-8 text-center text-slate-400">
           <ShieldCheck className="h-8 w-8 mx-auto mb-2 text-slate-300" />
           <p className="text-xs font-semibold text-slate-700">No statutory QCO standards indexed yet</p>
-          <p className="text-[11px] text-slate-500 mt-1">
-            Publish or import QCO records via the backend standard controller to track Gazette mandates.
-          </p>
+          <p className="text-[11px] text-slate-500 mt-1">Check back once DPIIT gazette notices have synced.</p>
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {qcos.map((item) => (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {qcos.map((qco) => (
           <div
-            key={item._id || item.code}
-            className="bg-white border border-brand-border rounded-xl p-5 shadow-sm hover:shadow-md transition-all space-y-3"
+            key={qco._id}
+            className="bg-white border border-brand-border rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between"
           >
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <span className="font-mono text-sm font-bold text-brand-blue bg-blue-50 px-2.5 py-1 rounded-md border border-blue-200/60 inline-block mb-1">
-                  {item.code}
+            <div>
+              <div className="flex items-start justify-between gap-2 mb-2">
+                <span className="font-mono text-xs font-bold text-brand-blue bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
+                  {qco.code}
                 </span>
-                <h3 className="text-xs font-bold text-slate-900">{item.title}</h3>
+                <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                  Enforced
+                </span>
               </div>
-              {item.status && (
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200 shrink-0">
-                  {item.status}
-                </span>
-              )}
+              <h4 className="text-xs font-bold text-slate-900 mb-1 line-clamp-2">
+                {qco.title}
+              </h4>
+              <p className="text-[11px] text-slate-500 line-clamp-2 mb-3">
+                {qco.description || 'Statutory Quality Control Order mandated under BIS Act 2016.'}
+              </p>
             </div>
 
-            {item.description && (
-              <p className="text-xs text-slate-600 line-clamp-3 leading-relaxed">
-                {item.description}
-              </p>
-            )}
-
-            <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-400">
-              <span>Category: <strong>{item.category || 'Statutory Order'}</strong></span>
-              {item.latestVersion && <span>Edition: v{item.latestVersion}</span>}
+            <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-400">
+              <span className="flex items-center gap-1">
+                <Building className="h-3 w-3" />
+                {qco.category || 'DPIIT / BIS'}
+              </span>
+              <span className="font-mono text-slate-500">v{qco.latestVersion || '1.0'}</span>
             </div>
           </div>
         ))}

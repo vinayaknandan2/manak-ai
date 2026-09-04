@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { Navigate, useLocation, Outlet } from 'react-router-dom';
-import { useAuth } from '../../app/hooks';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchProfile } from '../../features/auth/authSlice';
 import { getTokenCookie, getUserCookie } from '../../utils/cookieUtils';
 
 /**
@@ -8,7 +9,8 @@ import { getTokenCookie, getUserCookie } from '../../utils/cookieUtils';
  * Unauthenticated users are redirected to /login with state preservation.
  */
 export default function ProtectedRoute({ children }) {
-  const { isAuthenticated, loading, token, user, fetchProfile } = useAuth();
+  const dispatch = useDispatch();
+  const { isAuthenticated, loading, token, user } = useSelector((state) => state.auth);
   const location = useLocation();
 
   // Validate state and persistence cookies
@@ -19,9 +21,9 @@ export default function ProtectedRoute({ children }) {
   useEffect(() => {
     const activeToken = token || getTokenCookie();
     if (activeToken) {
-      fetchProfile?.().catch(() => {});
+      dispatch(fetchProfile()).catch(() => {});
     }
-  }, []);
+  }, [dispatch, token]);
 
   if (loading) {
     return (
@@ -44,7 +46,7 @@ export default function ProtectedRoute({ children }) {
  * If the user is already logged in, redirect them directly to the workspace.
  */
 export function PublicOnlyRoute({ children }) {
-  const { isAuthenticated, token, user } = useAuth();
+  const { isAuthenticated, token, user } = useSelector((state) => state.auth);
   const hasToken = Boolean(token || getTokenCookie());
   const hasUser = Boolean(user || getUserCookie());
   const isAuthorized = isAuthenticated || (hasToken && hasUser);

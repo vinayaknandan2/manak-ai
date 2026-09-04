@@ -1,13 +1,12 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { procurementApi } from '../../api/procurementApi';
+import { apiClient } from '../../api';
 
 // GET /api/procurement/dashboard/summary
 export const fetchDashboardSummary = createAsyncThunk(
   'procurement/fetchDashboardSummary',
   async (_, { rejectWithValue }) => {
     try {
-      const res = await procurementApi.getDashboardSummary();
-      return res;
+      return await apiClient.get('/procurement/dashboard/summary');
     } catch (err) {
       return rejectWithValue(err.message || 'Failed to fetch dashboard summary');
     }
@@ -19,7 +18,7 @@ export const fetchProcurements = createAsyncThunk(
   'procurement/fetchProcurements',
   async (_, { rejectWithValue }) => {
     try {
-      const res = await procurementApi.getProcurements();
+      const res = await apiClient.get('/procurement');
       return res.procurement;
     } catch (err) {
       return rejectWithValue(err.message || 'Failed to fetch procurements');
@@ -32,7 +31,7 @@ export const fetchProcurementById = createAsyncThunk(
   'procurement/fetchProcurementById',
   async (id, { rejectWithValue }) => {
     try {
-      const res = await procurementApi.getProcurementById(id);
+      const res = await apiClient.get(`/procurement/${id}`);
       return res.procurement;
     } catch (err) {
       return rejectWithValue(err.message || 'Failed to fetch procurement details');
@@ -45,7 +44,14 @@ export const createProcurement = createAsyncThunk(
   'procurement/createProcurement',
   async (data, { rejectWithValue }) => {
     try {
-      const res = await procurementApi.createProcurement(data);
+      const validTypes = ['tender', 'procurement', 'boq'];
+      const lower = (data.type || '').toLowerCase();
+      const type = validTypes.includes(lower) ? lower : 'tender';
+      const res = await apiClient.post('/procurement', {
+        name: data.name || data.title,
+        description: data.description,
+        type,
+      });
       return res.procurement;
     } catch (err) {
       return rejectWithValue(err.message || 'Failed to create procurement');
@@ -58,7 +64,7 @@ export const analyzeProcurement = createAsyncThunk(
   'procurement/analyzeProcurement',
   async (id, { rejectWithValue }) => {
     try {
-      const res = await procurementApi.analyzeProcurement(id);
+      const res = await apiClient.post(`/procurement/${id}/analyze`);
       return res.requirement;
     } catch (err) {
       return rejectWithValue(err.message || 'Procurement analysis failed');
@@ -71,7 +77,7 @@ export const deleteProcurement = createAsyncThunk(
   'procurement/deleteProcurement',
   async (id, { rejectWithValue }) => {
     try {
-      await procurementApi.deleteProcurement(id);
+      await apiClient.delete(`/procurement/${id}`);
       return id;
     } catch (err) {
       return rejectWithValue(err.message || 'Failed to delete procurement');
@@ -84,7 +90,7 @@ export const fetchRecommendations = createAsyncThunk(
   'procurement/fetchRecommendations',
   async (id, { rejectWithValue }) => {
     try {
-      const res = await procurementApi.getRecommendations(id);
+      const res = await apiClient.get(`/procurement/${id}/recommendations`);
       return res.recommendations;
     } catch (err) {
       return rejectWithValue(err.message || 'Failed to fetch recommendations');
@@ -97,7 +103,7 @@ export const recommendStandard = createAsyncThunk(
   'procurement/recommendStandard',
   async ({ id, query }, { rejectWithValue }) => {
     try {
-      const res = await procurementApi.recommendStandard(id, query);
+      const res = await apiClient.post(`/procurement/${id}/recommend`, { query });
       return res.recommendations;
     } catch (err) {
       return rejectWithValue(err.message || 'Failed to recommend standard');
@@ -110,7 +116,7 @@ export const fetchProcurementEvidence = createAsyncThunk(
   'procurement/fetchProcurementEvidence',
   async (id, { rejectWithValue }) => {
     try {
-      const res = await procurementApi.getProcurementEvidence(id);
+      const res = await apiClient.get(`/procurement/${id}/evidence`);
       return res.evidence;
     } catch (err) {
       return rejectWithValue(err.message || 'Failed to fetch procurement evidence');
@@ -123,8 +129,7 @@ export const fetchProcurementGraph = createAsyncThunk(
   'procurement/fetchProcurementGraph',
   async ({ id, depth = 1 }, { rejectWithValue }) => {
     try {
-      const res = await procurementApi.getProcurementGraph(id, depth);
-      return res;
+      return await apiClient.get(`/procurement/${id}/graph?depth=${depth}`);
     } catch (err) {
       return rejectWithValue(err.message || 'Failed to fetch procurement graph');
     }

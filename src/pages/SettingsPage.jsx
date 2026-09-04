@@ -12,10 +12,10 @@ import {
 } from 'lucide-react';
 import DashboardLayout from '../components/layout/DashboardLayout';
 import Button from '../components/common/Button';
-import { useAuth } from '../app/AuthContext';
+import { useSelector } from 'react-redux';
 
 export default function SettingsPage() {
-  const { user } = useAuth();
+  const { user } = useSelector((state) => state.auth);
   const [apiKey, setApiKey] = useState('manak_live_sec_994821a8901cf');
   const [copiedKey, setCopiedKey] = useState(false);
 
