@@ -1,5 +1,24 @@
-# Logs
-logs
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Production & Build Outputs
+dist/
+dist-ssr/
+build/
+*.local
+
+# Environment Variables & Secrets (Keep .env.example tracked)
+.env
+.env.development.local
+.env.test.local
+.env.production.local
+.env.local
+!.env.example
+
+# Logs & Debug Output
+logs/
 *.log
 npm-debug.log*
 yarn-debug.log*
@@ -7,18 +26,43 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
-*.local
+# Vite, Framework & Tooling Caches
+.vite/
+.cache/
+.eslintcache
+.stylelintcache
+.prettiercache
 
-# Editor directories and files
+# Testing & Coverage
+coverage/
+*.lcov
+.nyc_output/
+
+# IDE & Editor Settings
 .vscode/*
 !.vscode/extensions.json
-.idea
-.DS_Store
+!.vscode/settings.json
+.idea/
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+*.swo
+
+# Operating System Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Thumbs.db:encryptable
+desktop.ini
+
+# Temporary & Backup Files
+*.tmp
+*.temp
+*.bak
+*~

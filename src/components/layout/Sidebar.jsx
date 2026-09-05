@@ -34,13 +34,13 @@ export default function Sidebar({
     },
     {
       to: '/tender-auditor',
-      label: 'Tender Gap Auditor',
+      label: 'Audit Tender',
       icon: Users,
       badge: 'New',
     },
     {
       to: '/spec-recommender',
-      label: 'Spec Recommender',
+      label: 'Search Standards',
       icon: Search,
     },
     {
@@ -81,14 +81,12 @@ export default function Sidebar({
 
       {/* Main Sidebar: Drawer on mobile, Sticky Flex sibling on desktop (no overlaying page content) */}
       <aside
-        className={`fixed inset-y-0 left-0 z-40 lg:static lg:sticky lg:top-0 lg:h-screen lg:z-20 shrink-0 bg-[#FBFBFC] border-r border-slate-200/80 flex flex-col transition-all duration-300 ease-in-out ${
-          isOpen ? 'translate-x-0 shadow-2xl w-60' : '-translate-x-full lg:translate-x-0'
-        } ${isCollapsed ? 'lg:w-[70px]' : 'lg:w-60'}`}
+        className={`fixed inset-y-0 left-0 z-40 lg:static lg:sticky lg:top-0 lg:h-screen lg:z-20 shrink-0 bg-[#FBFBFC] border-r border-slate-200/80 flex flex-col transition-all duration-300 ease-in-out ${isOpen ? 'translate-x-0 shadow-2xl w-60' : '-translate-x-full lg:translate-x-0'
+          } ${isCollapsed ? 'lg:w-[70px]' : 'lg:w-60'}`}
       >
         {/* Header: ONLY ManakAI in green, NO black box */}
-        <div className={`border-b border-slate-100 flex items-center transition-all duration-300 ${
-          isCollapsed ? 'p-3 flex-col justify-center gap-2' : 'px-4 py-4 justify-between'
-        }`}>
+        <div className={`border-b border-slate-100 flex items-center transition-all duration-300 ${isCollapsed ? 'p-3 flex-col justify-center gap-2' : 'px-4 py-4 justify-between'
+          }`}>
           {!isCollapsed ? (
             <span className="font-semibold text-lg text-emerald-600 tracking-tight select-none">
               ManakAI
@@ -142,21 +140,18 @@ export default function Sidebar({
               onClick={onClose}
               title={isCollapsed ? item.label : undefined}
               className={({ isActive }) =>
-                `flex items-center gap-3 px-2.5 py-2 rounded-lg text-xs font-medium transition-all ${
-                  isCollapsed ? 'justify-center px-0' : ''
-                } ${
-                  isActive
-                    ? 'bg-slate-100 text-slate-900 font-medium'
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70 font-normal'
+                `flex items-center gap-3 px-2.5 py-2 rounded-lg text-xs font-medium transition-all ${isCollapsed ? 'justify-center px-0' : ''
+                } ${isActive
+                  ? 'bg-slate-100 text-slate-900 font-medium'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70 font-normal'
                 }`
               }
             >
               {({ isActive }) => (
                 <>
                   <item.icon
-                    className={`h-4 w-4 shrink-0 transition-colors ${
-                      isActive ? 'text-slate-900' : 'text-slate-500'
-                    }`}
+                    className={`h-4 w-4 shrink-0 transition-colors ${isActive ? 'text-slate-900' : 'text-slate-500'
+                      }`}
                   />
                   {!isCollapsed && (
                     <span className="truncate flex-1">{item.label}</span>
@@ -184,21 +179,18 @@ export default function Sidebar({
               onClick={onClose}
               title={isCollapsed ? item.label : undefined}
               className={({ isActive }) =>
-                `flex items-center gap-3 px-2.5 py-2 rounded-lg text-xs font-medium transition-all ${
-                  isCollapsed ? 'justify-center px-0' : ''
-                } ${
-                  isActive
-                    ? 'bg-slate-100 text-slate-900 font-medium'
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70 font-normal'
+                `flex items-center gap-3 px-2.5 py-2 rounded-lg text-xs font-medium transition-all ${isCollapsed ? 'justify-center px-0' : ''
+                } ${isActive
+                  ? 'bg-slate-100 text-slate-900 font-medium'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70 font-normal'
                 }`
               }
             >
               {({ isActive }) => (
                 <>
                   <item.icon
-                    className={`h-4 w-4 shrink-0 transition-colors ${
-                      isActive ? 'text-slate-900' : 'text-slate-500'
-                    }`}
+                    className={`h-4 w-4 shrink-0 transition-colors ${isActive ? 'text-slate-900' : 'text-slate-500'
+                      }`}
                   />
                   {!isCollapsed && (
                     <span className="truncate flex-1">{item.label}</span>
@@ -210,9 +202,8 @@ export default function Sidebar({
         </nav>
 
         {/* Footer Officer Card & Sign Out */}
-        <div className={`p-2.5 border-t border-slate-200/80 bg-[#F8FAFC] ${
-          isCollapsed ? 'flex flex-col items-center gap-2' : ''
-        }`}>
+        <div className={`p-2.5 border-t border-slate-200/80 bg-[#F8FAFC] ${isCollapsed ? 'flex flex-col items-center gap-2' : ''
+          }`}>
           {!isCollapsed ? (
             <div className="flex items-center justify-between gap-2 p-1.5 rounded-lg hover:bg-slate-100/80 transition-colors">
               <div className="flex items-center gap-2 min-w-0">
